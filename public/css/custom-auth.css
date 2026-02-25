@@ -1,0 +1,125 @@
+body {
+    background-color: #fff !important;
+    overflow-x: hidden;
+}
+.login-container {
+    min-height: 100vh;
+}
+.login-sidebar {
+    background: url('../images/log in cover.webp') no-repeat center center;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+.login-sidebar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(79, 70, 229, 0.4) 0%, rgba(55, 48, 163, 0.4) 100%);
+    z-index: 1;
+}
+.login-sidebar > * {
+    position: relative;
+    z-index: 2;
+}
+.brand-icon {
+    font-size: 5rem;
+    margin-bottom: 1.5rem;
+    animation: float 6s ease-in-out infinite;
+}
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
+.brand-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+.brand-tagline {
+    font-size: 1.1rem;
+    opacity: 0.8;
+    text-align: center;
+    max-width: 400px;
+    line-height: 1.6;
+}
+.login-form-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 3rem 5rem;
+}
+.form-header {
+    margin-bottom: 2.5rem;
+}
+.form-header h2 {
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+.form-floating > .form-control {
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    padding-left: 1rem;
+}
+.form-floating > .form-control:focus {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+.form-floating > label {
+    padding-left: 1rem;
+}
+.btn-primary-custom {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+    color: white;
+    padding: 0.8rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+    width: 100%;
+    margin-top: 1rem;
+}
+.btn-primary-custom:hover {
+    background-color: #4338ca;
+    border-color: #4338ca;
+    transform: translateY(-1px);
+}
+.social-login-btn {
+    border: 1px solid #e5e7eb;
+    background: white;
+    color: #374151;
+    font-weight: 500;
+    padding: 0.6rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+}
+.social-login-btn:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+    .login-sidebar {
+        padding: 3rem 1.5rem;
+        min-height: 300px;
+    }
+    .login-form-section {
+        padding: 2rem 1.5rem;
+    }
+    .login-container {
+        flex-direction: column;
+    }
+}

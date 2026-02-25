@@ -1,0 +1,201 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// Variables Overrides (Must be before Bootstrap import)
+$font-family-sans-serif: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+// Modern Professional Palette
+$primary: #4f46e5; // Indigo 600
+$secondary: #64748b; // Slate 500
+$success: #10b981; // Emerald 500
+$info: #0ea5e9; // Sky 500
+$warning: #f59e0b; // Amber 500
+$danger: #ef4444; // Red 500
+$light: #f8fafc; // Slate 50
+$dark: #0f172a; // Slate 900
+
+$body-bg: #f1f5f9; // Slate 100
+$body-color: #334155; // Slate 700
+
+$card-border-radius: 1rem;
+$card-border-width: 0;
+$card-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+
+$btn-border-radius: 0.5rem;
+$btn-padding-y: 0.625rem;
+$btn-padding-x: 1.25rem;
+$btn-font-weight: 600;
+
+$input-border-radius: 0.5rem;
+$input-focus-ring-color: rgba($primary, 0.25);
+$input-padding-y: 0.625rem;
+$input-padding-x: 1rem;
+
+$navbar-padding-y: 1rem;
+$navbar-light-brand-color: $primary;
+$navbar-light-brand-hover-color: darken($primary, 10%);
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+// Custom Styles (After Bootstrap)
+
+// Global Utilities
+.fw-medium { font-weight: 500; }
+.fw-semibold { font-weight: 600; }
+.text-xs { font-size: 0.75rem; }
+.text-sm { font-size: 0.875rem; }
+
+// NProgress Custom Styles
+#nprogress .bar {
+  background: $primary !important;
+  height: 3px !important;
+}
+#nprogress .peg {
+  box-shadow: 0 0 10px $primary, 0 0 5px $primary !important;
+}
+#nprogress .spinner-icon {
+  border-top-color: $primary !important;
+  border-left-color: $primary !important;
+}
+
+// Custom Buttons
+.btn-primary {
+    background-color: $primary;
+    border-color: $primary;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        background-color: darken($primary, 5%);
+        border-color: darken($primary, 5%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px -1px rgba($primary, 0.4), 0 2px 4px -1px rgba($primary, 0.2);
+    }
+}
+
+// Cards
+.card {
+    border: none;
+    box-shadow: $card-box-shadow;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    margin-bottom: 1.5rem;
+    background-color: white;
+
+    .card-header {
+        background-color: transparent;
+        border-bottom: 1px solid #f1f5f9;
+        font-weight: 700;
+        color: $dark;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1.5rem;
+    }
+}
+
+// Stat Cards
+.stat-card {
+    overflow: hidden;
+    position: relative;
+    border-radius: 1rem;
+    
+    .card-body {
+        position: relative;
+        z-index: 2;
+    }
+    
+    .icon-wrapper {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 1.5rem;
+    }
+}
+
+// Auth Layout
+.auth-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+}
+
+// Navbar
+.navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-radius: 0.75rem;
+    padding: 0.5rem;
+    
+    .dropdown-item {
+        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        
+        &:hover {
+            background-color: $light;
+            color: $primary;
+        }
+        
+        &.text-danger:hover {
+            background-color: #fef2f2;
+            color: $danger;
+        }
+    }
+}
+
+// Table Styles
+.table {
+    th {
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: $secondary;
+        background-color: $light;
+        border-bottom: none;
+        padding: 1rem 1.5rem;
+    }
+    
+    td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+        border-bottom: 1px solid #f1f5f9;
+        color: $body-color;
+        font-weight: 500;
+    }
+    
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+// Animations
+.fade-in-up {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
