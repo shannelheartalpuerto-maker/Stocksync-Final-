@@ -45,8 +45,9 @@
             display: none !important;
         }
 
-        /* Keep admin pages tight below top navbar */
-        body.admin-layout main.py-4 {
+        /* Keep admin/staff pages tight below top navbar */
+        body.admin-layout main.py-4,
+        body.staff-layout main.py-4 {
             padding-top: 0.5rem !important;
         }
 

@@ -135,10 +135,15 @@
         box-shadow: 0 2px 10px rgba(0,0,0,.04);
         padding: 0.4rem;
     }
+    @media (min-width: 768px) {
+        .logs-page-wrap {
+            padding-top: 0.75rem !important;
+        }
+    }
 </style>
 @endpush
 
-<div class="container-fluid px-4 staff-container animate-fade-up">
+<div class="container-fluid px-4 staff-container logs-page-wrap animate-fade-up">
     <div class="inv-topbar mb-4">
         <div class="inv-topbar-inner">
             <div class="inv-title-wrap">
@@ -259,6 +264,49 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        function cleanupModalArtifacts() {
+            var openModal = document.querySelector('.modal.show');
+            var backdrops = document.querySelectorAll('.modal-backdrop');
+
+            backdrops.forEach(function(backdrop, index) {
+                if (!openModal || index < backdrops.length - 1) {
+                    backdrop.remove();
+                }
+            });
+
+            if (!openModal) {
+                document.body.classList.remove('modal-open');
+                document.body.style.removeProperty('padding-right');
+            }
+        }
+
+        function moveTabModalsToBody(contentId) {
+            var content = document.getElementById(contentId);
+            if (!content) return;
+
+            content.querySelectorAll('.modal[id]').forEach(function(modal) {
+                document.querySelectorAll('body > .modal[id]').forEach(function(existing) {
+                    if (existing !== modal && existing.id === modal.id) {
+                        existing.remove();
+                    }
+                });
+
+                document.body.appendChild(modal);
+
+                if (!modal.dataset.backdropCleanupBound) {
+                    modal.addEventListener('hidden.bs.modal', cleanupModalArtifacts);
+                    modal.dataset.backdropCleanupBound = '1';
+                }
+            });
+        }
+
+        function refreshAllLogModals() {
+            ['returned-content', 'stock-out-content', 'damaged-content'].forEach(moveTabModalsToBody);
+            cleanupModalArtifacts();
+        }
+
+        refreshAllLogModals();
+
         // Tab Persistence
         var activeTab = localStorage.getItem('activeLogTab');
         if (activeTab) {
@@ -304,6 +352,7 @@
                     .then(html => {
                         contentDiv.innerHTML = html;
                         contentDiv.style.opacity = '1';
+                        refreshAllLogModals();
                         // Re-scroll to top of table if needed, or just stay put
                     })
                     .catch(error => {
@@ -345,6 +394,7 @@
                             stockOutContent.innerHTML = data.tabs.stockout_html;
                             damagedContent.innerHTML = data.tabs.damaged_html;
                             [returnedContent, stockOutContent, damagedContent].forEach(el => { el.style.opacity = '1'; anim(el); });
+                            refreshAllLogModals();
                         }
                         if (data.summaries) {
                             statReturned.textContent = `+${Number(data.summaries.returned).toLocaleString()}`;
