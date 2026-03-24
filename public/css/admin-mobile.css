@@ -681,13 +681,23 @@
         border-radius: 16px !important;
         border: none !important;
         padding: 0.85rem 0.75rem !important;
-        min-height: 85px !important;
+        min-height: 106px !important;
+        height: 100% !important;
+        width: 100% !important;
         display: flex !important;
         flex-direction: column !important;
         justify-content: center !important;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03) !important;
         background-image: none !important;
         transition: transform 0.15s ease !important;
+    }
+
+    .row.g-3 > [class*="col-12"][class*="col-sm-6"],
+    .row.g-3 > [class*="col-12"][class*="col-xl-3"],
+    .row.g-3 > [class*="col-12"][class*="col-lg-3"],
+    .row.g-4 > [class*="col-12"][class*="col-sm-6"][class*="col-lg-3"],
+    .row.g-4 > [class*="col-12"][class*="col-sm-6"][class*="col-xl-3"] {
+        display: flex !important;
     }
 
     .stat-card:active {
@@ -942,6 +952,52 @@
     #inventory-container .inv-table tbody td:nth-child(4)::before { content: "Stock" !important; }
     #inventory-container .inv-table tbody td:nth-child(5)::before { content: "Status" !important; }
 
+    /* Staff inventory: keep product title block clean and left-aligned on mobile */
+    #inventory-container .inv-table tbody td:first-child.staff-product-cell {
+        justify-content: flex-start !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 0 !important;
+        padding-top: 0.15rem !important;
+        padding-bottom: 0.55rem !important;
+    }
+
+    #inventory-container .inv-table tbody td:first-child .staff-product-main {
+        width: 100% !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 0.5rem !important;
+        min-width: 0 !important;
+    }
+
+    #inventory-container .inv-table tbody td:first-child .staff-product-thumb {
+        flex: 0 0 auto !important;
+        margin-right: 0.5rem !important;
+    }
+
+    #inventory-container .inv-table tbody td:first-child .staff-product-meta {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        text-align: left !important;
+    }
+
+    #inventory-container .inv-table tbody td:first-child .staff-product-name {
+        font-size: 1rem !important;
+        line-height: 1.2 !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    #inventory-container .inv-table tbody td:first-child .staff-product-code {
+        margin-top: 0.15rem !important;
+        text-align: left !important;
+        font-size: 0.78rem !important;
+        letter-spacing: 0.15px !important;
+    }
+
     #productsTableBody td:nth-child(2)::before,
     #productsTableWrap .inv-table tbody td:nth-child(2)::before { content: "SKU" !important; }
     #productsTableBody td:nth-child(3)::before,
@@ -1028,6 +1084,96 @@
     #staffTrxTableWrap .inv-table tbody td:nth-child(3) {
         font-weight: 750 !important;
         color: #0f172a !important;
+    }
+
+    /* Admin Sales (Transactions) mobile polish */
+    #transactionsTableWrap .table tbody {
+        gap: 0.7rem !important;
+    }
+
+    #transactionsTableWrap .table tbody tr {
+        padding: 0.8rem 0.75rem !important;
+        border-radius: 16px !important;
+        border: 1px solid #e2e8f0 !important;
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05) !important;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%) !important;
+    }
+
+    #transactionsTableWrap .table tbody td {
+        max-width: 100% !important;
+    }
+
+    #transactionsTableWrap .table tbody td:first-child {
+        border-bottom: 1px solid #e5e7eb !important;
+        padding-bottom: 0.45rem !important;
+        margin-bottom: 0.15rem !important;
+    }
+
+    #transactionsTableWrap .table tbody td:first-child .badge {
+        border-radius: 999px !important;
+        padding: 0.25rem 0.55rem !important;
+        font-size: 0.76rem !important;
+        background: #eef2ff !important;
+        border-color: #c7d2fe !important;
+        color: #4338ca !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(2) {
+        grid-template-columns: minmax(72px, 84px) minmax(0, 1fr) !important;
+        align-items: start !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(2) > div {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.1rem !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(2) .fw-bold {
+        font-size: 0.98rem !important;
+        color: #0f172a !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(2) .small {
+        font-size: 0.74rem !important;
+        color: #64748b !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(3) .rounded-circle {
+        width: 30px !important;
+        height: 30px !important;
+        background: #f1f5f9 !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(3) .fa-user {
+        font-size: 0.72rem !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(3) .text-dark {
+        font-weight: 600 !important;
+    }
+
+    #transactionsTableWrap .table tbody td:nth-child(4) .fw-bold {
+        font-size: 1.05rem !important;
+        color: #059669 !important;
+        letter-spacing: -0.2px !important;
+    }
+
+    #transactionsTableWrap .table tbody td:last-child {
+        border-top: 1px solid #e2e8f0 !important;
+        padding-top: 0.55rem !important;
+        justify-content: end !important;
+    }
+
+    #transactionsTableWrap .sales-details-btn {
+        border-radius: 11px !important;
+        padding: 0.36rem 0.8rem !important;
+        font-size: 0.78rem !important;
+        font-weight: 700 !important;
+        border: 1px solid #dbeafe !important;
+        background: #f8fafc !important;
+        color: #1e40af !important;
+        box-shadow: none !important;
     }
 
     /* Empty state rows */
@@ -1724,12 +1870,18 @@
        SECTION 23: CHARTS
        ───────────────────────────────────────── */
 
-    #revenueChart {
-        height: 180px !important;
+    #revenueChartCard .card-body-custom {
+        padding: 0.5rem 0.65rem 0.65rem !important;
     }
 
-    #revenueChartCard .card-body-custom {
-        padding: 0.5rem 0.75rem !important;
+    #revenueChartCard .card-body-custom > div {
+        height: 220px !important;
+        min-height: 220px !important;
+    }
+
+    #revenueChart {
+        width: 100% !important;
+        height: 100% !important;
     }
 
     /* ─────────────────────────────────────────

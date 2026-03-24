@@ -181,7 +181,7 @@
             </div>
 
             <div class="sales-table-shell">
-            <div class="table-responsive">
+            <div class="table-responsive" id="transactionsTableWrap">
                 <table class="table align-middle inv-table">
                     <thead>
                         <tr>

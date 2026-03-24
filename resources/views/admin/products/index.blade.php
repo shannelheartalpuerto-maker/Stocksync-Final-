@@ -647,8 +647,8 @@
                 @csrf
                 <div class="modal-header border-0 pb-0">
                     <div class="d-flex align-items-center">
-                        <div class="bg-indigo bg-opacity-10 p-2 rounded-3 me-3">
-                            <i class="fa-solid fa-box-open text-indigo fs-4"></i>
+                        <div class="bg-indigo p-2 rounded-3 me-3 d-inline-flex align-items-center justify-content-center" style="width:46px;height:46px;">
+                            <i class="fa-solid fa-box-open text-white fs-5"></i>
                         </div>
                         <div>
                             <h5 class="modal-title fw-bold mb-0" id="addProductModalLabel">New Product</h5>
@@ -736,20 +736,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-indigo bg-opacity-10 rounded-4 p-3">
-                                <h6 class="fw-bold mb-2 text-indigo"><i class="fa-solid fa-sliders me-2"></i>Inventory Thresholds</h6>
+                            <div class="bg-white border rounded-4 p-3">
+                                <h6 class="fw-bold mb-2 text-dark"><i class="fa-solid fa-sliders me-2 text-primary"></i>Inventory Thresholds</h6>
                                 <div class="row g-2">
                                     <div class="col-4">
-                                        <label class="form-label small fw-bold text-muted mb-1">Low Stock</label>
-                                        <input type="number" class="form-control border-0 shadow-sm threshold-input" name="low_stock_threshold" value="{{ old('low_stock_threshold', 10) }}" min="0" required>
+                                        <label class="form-label small fw-bold text-dark mb-1">Low Stock</label>
+                                        <input type="number" class="form-control border shadow-sm threshold-input text-dark bg-white" name="low_stock_threshold" value="{{ old('low_stock_threshold', 10) }}" min="0" required>
                                     </div>
                                     <div class="col-4">
-                                        <label class="form-label small fw-bold text-muted mb-1">Good Stock</label>
-                                        <input type="number" class="form-control border-0 shadow-sm threshold-input" name="good_stock_threshold" value="{{ old('good_stock_threshold', 50) }}" min="0" required>
+                                        <label class="form-label small fw-bold text-dark mb-1">Good Stock</label>
+                                        <input type="number" class="form-control border shadow-sm threshold-input text-dark bg-white" name="good_stock_threshold" value="{{ old('good_stock_threshold', 50) }}" min="0" required>
                                     </div>
                                     <div class="col-4">
-                                        <label class="form-label small fw-bold text-muted mb-1">Overstock</label>
-                                        <input type="number" class="form-control border-0 shadow-sm threshold-input" name="overstock_threshold" value="{{ old('overstock_threshold', 100) }}" min="0" required>
+                                        <label class="form-label small fw-bold text-dark mb-1">Overstock</label>
+                                        <input type="number" class="form-control border shadow-sm threshold-input text-dark bg-white" name="overstock_threshold" value="{{ old('overstock_threshold', 100) }}" min="0" required>
                                     </div>
                                 </div>
                             </div>

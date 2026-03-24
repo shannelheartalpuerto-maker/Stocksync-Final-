@@ -13,24 +13,27 @@
         <tbody>
             @forelse($products as $product)
             <tr>
-                <td class="ps-4">
-                    <div class="d-flex align-items-center">
-                        <div class="product-img-wrapper me-3">
+                <td class="ps-4 staff-product-cell">
+                    <div class="d-flex align-items-center staff-product-main">
+                        <div class="product-img-wrapper me-3 staff-product-thumb">
                             @if($product->image)
                                 <img src="{{ asset('storage/' . $product->image) }}" 
                                      alt="{{ $product->name }}" 
                                      class="rounded-3 shadow-sm border" 
                                      style="width: 52px; height: 52px; object-fit: cover;"
-                                     onerror="this.outerHTML='<div class=\"bg-light d-flex align-items-center justify-content-center text-muted border rounded-3\" style=\"width: 52px; height: 52px;\"><i class=\"fa-solid fa-image small\"></i></div>'">
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="bg-light align-items-center justify-content-center text-muted border rounded-3" style="width: 52px; height: 52px; display:none;">
+                                    <i class="fa-solid fa-image small"></i>
+                                </div>
                             @else
                                 <div class="bg-light d-flex align-items-center justify-content-center text-muted border rounded-3" style="width: 52px; height: 52px;">
                                     <i class="fa-solid fa-image small"></i>
                                 </div>
                             @endif
                         </div>
-                        <div>
-                            <div class="fw-bold text-dark fs-6">{{ $product->name }}</div>
-                            <div class="text-muted small code-font opacity-75">{{ $product->code }}</div>
+                        <div class="staff-product-meta">
+                            <div class="fw-bold text-dark fs-6 staff-product-name">{{ $product->name }}</div>
+                            <div class="text-muted small code-font opacity-75 staff-product-code">{{ $product->code }}</div>
                         </div>
                     </div>
                 </td>

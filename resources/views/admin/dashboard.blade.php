@@ -3,7 +3,7 @@
 @section('content')
 <link href="{{ asset('css/staff-design.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
-/* ── Admin Dashboard ── */
+/* Admin Dashboard */
 .inv-topbar {
     position: relative;
     overflow: hidden;
@@ -110,7 +110,7 @@
 </style>
 <div class="container-fluid px-4 staff-container animate-fade-up">
 
-    {{-- ═══ Mobile Header (mirrors inv-topbar + action buttons, mobile only) ═══ --}}
+    {{-- Mobile Header (mirrors inv-topbar + action buttons, mobile only) --}}
     <div class="mobile-topbar-card" style="display:none;">
         <div class="inv-topbar-inner">
             <div class="inv-title-wrap">
@@ -132,7 +132,7 @@
         </div>
     </div>
 
-    {{-- ═══ Mobile Quick Access Grid (visible only on mobile) ═══ --}}
+    {{-- Mobile Quick Access Grid (visible only on mobile) --}}
     <div class="mobile-quick-grid" style="display:none;">
         <a href="{{ route('admin.staff.index') }}" class="quick-item">
             <div class="quick-icon"><i class="fa-solid fa-users"></i></div>
@@ -600,7 +600,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Persist active tab — URL param takes priority over localStorage
+        // Persist active tab - URL param takes priority over localStorage
         const urlParams = new URLSearchParams(window.location.search);
         const tabFromUrl = urlParams.get('tab');
         const tabMap = { 'product': '#product', 'sales': '#sales', 'forecast': '#forecast' };
@@ -624,68 +624,86 @@
 
         // Chart.js
         let revenueChart = null;
-        const ctx = document.getElementById('revenueChart');
-        if (ctx) {
-            revenueChart = new Chart(ctx, {
+        const isMobileView = () => window.matchMedia('(max-width: 767.98px)').matches;
+        const formatChartPeso = (value) => '₱' + Number(value).toLocaleString();
+        const compactDateLabel = (label) => {
+            const date = new Date(label);
+            if (Number.isNaN(date.getTime())) return label;
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        };
+        const createRevenueChart = (labels, revenues) => {
+            const chartEl = document.getElementById('revenueChart');
+            if (!chartEl) return null;
+            const mobile = isMobileView();
+
+            if (revenueChart) revenueChart.destroy();
+            return new Chart(chartEl.getContext('2d'), {
                 type: 'line',
                 data: {
-                    labels: {!! json_encode($dates) !!},
+                    labels,
                     datasets: [{
                         label: 'Revenue (₱)',
-                        data: {!! json_encode($revenues) !!},
+                        data: revenues,
                         borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        borderWidth: 2,
+                        backgroundColor: 'rgba(79, 70, 229, 0.12)',
+                        borderWidth: mobile ? 2 : 3,
                         fill: true,
-                        tension: 0.4,
+                        tension: 0.35,
                         pointBackgroundColor: '#ffffff',
                         pointBorderColor: '#4f46e5',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
+                        pointRadius: mobile ? 2 : 4,
+                        pointHoverRadius: mobile ? 4 : 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: mobile ? { left: 8, right: 8, top: 4, bottom: 0 } : { left: 0, right: 0, top: 0, bottom: 0 }
+                    },
                     plugins: {
-                        legend: {
-                            display: false
-                        },
+                        legend: { display: false },
                         tooltip: {
                             backgroundColor: '#1e293b',
-                            padding: 12,
-                            titleFont: { size: 13 },
-                            bodyFont: { size: 13 },
+                            padding: mobile ? 10 : 12,
+                            titleFont: { size: mobile ? 11 : 13 },
+                            bodyFont: { size: mobile ? 11 : 13 },
                             displayColors: false,
                             callbacks: {
-                                label: function(context) {
-                                    return '₱ ' + context.parsed.y.toLocaleString();
-                                }
+                                label: function(context) { return formatChartPeso(context.parsed.y); }
                             }
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
-                            grid: {
-                                borderDash: [5, 5],
-                                color: 'rgba(0,0,0,0.05)'
-                            },
+                            grid: { borderDash: [5, 5], color: 'rgba(0,0,0,0.05)' },
                             ticks: {
-                                callback: function(value) {
-                                    return '₱' + value;
-                                }
+                                maxTicksLimit: mobile ? 5 : 8,
+                                padding: mobile ? 6 : 8,
+                                font: { size: mobile ? 10 : 12 },
+                                callback: function(value) { return formatChartPeso(value); }
                             }
                         },
                         x: {
-                            grid: {
-                                display: false
+                            grid: { display: false },
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: mobile ? 4 : 8,
+                                maxRotation: 0,
+                                minRotation: 0,
+                                font: { size: mobile ? 10 : 12 },
+                                callback: function(value) {
+                                    const label = this.getLabelForValue(value);
+                                    return mobile ? compactDateLabel(label) : label;
+                                }
                             }
                         }
                     }
                 }
             });
-        }
+        };
+        revenueChart = createRevenueChart({!! json_encode($dates) !!}, {!! json_encode($revenues) !!});
 
         // Helpers
         const peso = (n) => '₱' + Number(n).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -739,52 +757,7 @@
             }
             
             // Update chart
-            if (revenueChart) revenueChart.destroy();
-            const chartCtx = document.getElementById('revenueChart').getContext('2d');
-            revenueChart = new Chart(chartCtx, {
-                type: 'line',
-                data: {
-                    labels: data.chart.dates,
-                    datasets: [{
-                        label: 'Revenue (₱)',
-                        data: data.chart.revenues,
-                        borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#4f46e5',
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            padding: 12,
-                            titleFont: { size: 13 },
-                            bodyFont: { size: 13 },
-                            displayColors: false,
-                            callbacks: {
-                                label: function(context) { return '₱ ' + context.parsed.y.toLocaleString(); }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            grid: { borderDash: [5,5], color: 'rgba(0,0,0,0.05)' },
-                            ticks: { callback: (v) => '₱' + v }
-                        },
-                        x: { grid: { display: false } }
-                    }
-                }
-            });
+            revenueChart = createRevenueChart(data.chart.dates, data.chart.revenues);
             animateOnce(document.getElementById('revenueChartCard'));
         }
 

@@ -150,7 +150,7 @@
 </div>
 
 <!-- Success Modal -->
-<div class="modal fade" id="saleSuccessModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal fade" id="saleSuccessModal" data-bs-backdrop="false" data-bs-keyboard="true" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
       <div class="modal-body p-5 text-center bg-white position-relative">
@@ -178,10 +178,10 @@
         </div>
 
         <div class="d-flex gap-2">
-            <button type="button" class="btn btn-outline-secondary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold" onclick="window.print()">
+            <button type="button" id="printReceiptBtn" class="btn btn-outline-secondary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold">
                 <i class="fa-solid fa-print me-1"></i> Print Receipt
             </button>
-            <button type="button" class="btn btn-primary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold" onclick="location.reload()">
+            <button type="button" id="newOrderBtn" data-bs-dismiss="modal" class="btn btn-primary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold">
                 <i class="fa-solid fa-plus me-1"></i> New Order
             </button>
         </div>
@@ -449,6 +449,29 @@
         animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
+    /* Keep success modal above backdrop on all devices */
+    .modal-backdrop.show {
+        z-index: 2000 !important;
+        opacity: 0 !important;
+        background: transparent !important;
+    }
+
+    #saleSuccessModal {
+        z-index: 2100 !important;
+    }
+
+    #saleSuccessModal .modal-dialog {
+        position: relative !important;
+        z-index: 2110 !important;
+        pointer-events: auto !important;
+    }
+
+    #saleSuccessModal .modal-content {
+        pointer-events: auto !important;
+        opacity: 1 !important;
+        filter: none !important;
+    }
+
     @keyframes pop {
         0% { transform: scale(0.5); opacity: 0; }
         100% { transform: scale(1); opacity: 1; }
@@ -463,6 +486,26 @@
 
 <script>
     let cart = [];
+
+    function cleanupModalArtifacts() {
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
+
+    function normalizeSuccessBackdrop() {
+        const saleModal = document.getElementById('saleSuccessModal');
+        const backdrops = document.querySelectorAll('.modal-backdrop');
+
+        if (!saleModal || !saleModal.classList.contains('show')) return;
+
+        // Success modal uses no backdrop. Remove any stray backdrop immediately.
+        backdrops.forEach(backdrop => backdrop.remove());
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = '';
+        document.body.style.paddingRight = '';
+    }
     
     function showError(message) {
         if (typeof bootstrap !== 'undefined') {
@@ -491,6 +534,43 @@
     document.getElementById('searchProduct').addEventListener('input', filterProducts);
     document.getElementById('categoryFilter').addEventListener('change', filterProducts);
     document.getElementById('brandFilter').addEventListener('change', filterProducts);
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Clear any ghost backdrop left from previous navigation/session.
+        if (!document.querySelector('.modal.show')) {
+            cleanupModalArtifacts();
+        }
+
+        const saleSuccessModalEl = document.getElementById('saleSuccessModal');
+        const saleSuccessModal = bootstrap.Modal.getOrCreateInstance(saleSuccessModalEl);
+        const printBtn = document.getElementById('printReceiptBtn');
+        const newOrderBtn = document.getElementById('newOrderBtn');
+
+        saleSuccessModalEl.addEventListener('hidden.bs.modal', function() {
+            // Delay avoids racing with bootstrap hide transition.
+            setTimeout(cleanupModalArtifacts, 20);
+        });
+
+        saleSuccessModalEl.addEventListener('shown.bs.modal', function() {
+            normalizeSuccessBackdrop();
+        });
+
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                window.print();
+            });
+        }
+
+        if (newOrderBtn) {
+            newOrderBtn.addEventListener('click', function() {
+                saleSuccessModal.hide();
+                cart = [];
+                document.getElementById('paymentReceived').value = '';
+                renderCart();
+                cleanupModalArtifacts();
+            });
+        }
+    });
 
     function addToCart(id, name, price, maxQty) {
         let item = cart.find(i => i.id === id);
@@ -610,7 +690,10 @@
                     document.getElementById('successTrxId').innerText = data.transaction_number;
                     document.getElementById('successTotal').innerText = '₱' + parseFloat(data.total_amount).toLocaleString(undefined, {minimumFractionDigits: 2});
                     document.getElementById('successChange').innerText = '₱' + parseFloat(data.change_returned).toLocaleString(undefined, {minimumFractionDigits: 2});
-                    bootstrap.Modal.getOrCreateInstance(document.getElementById('saleSuccessModal')).show();
+                    cleanupModalArtifacts();
+                    const saleSuccessModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('saleSuccessModal'));
+                    saleSuccessModal.show();
+                    setTimeout(normalizeSuccessBackdrop, 20);
                 } else {
                     showError(data.error);
                 }
