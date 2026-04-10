@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Schema;
 
 class RegisterController extends Controller
 {
@@ -63,12 +64,18 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $userData = [
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role' => 'admin', // Force new registrations to be Admins
             'status' => 'active',
-        ]);
+        ];
+
+        if (Schema::hasColumn('users', 'admin_guide_enabled')) {
+            $userData['admin_guide_enabled'] = true;
+        }
+
+        return User::create($userData);
     }
 }

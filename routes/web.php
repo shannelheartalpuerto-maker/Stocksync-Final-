@@ -55,6 +55,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/admin-guide-seen', [App\Http\Controllers\AdminController::class, 'markAdminGuideSeen'])->name('dashboard.admin_guide_seen');
     // Async dashboard data
     Route::get('/dashboard/sales-data', [App\Http\Controllers\AdminController::class, 'salesData'])->name('dashboard.sales_data');
     Route::get('/dashboard/forecast-data', [App\Http\Controllers\AdminController::class, 'forecastData'])->name('dashboard.forecast_data');

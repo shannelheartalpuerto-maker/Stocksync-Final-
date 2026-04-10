@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\StockLog;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class AdminController extends Controller
 {
@@ -15,6 +16,9 @@ class AdminController extends Controller
     {
         $adminId = $this->getAdminId();
         $period = request('period', 'all_time');
+        $showAdminGuide = Schema::hasColumn('users', 'admin_guide_enabled')
+            && auth()->user()->role === 'admin'
+            && (bool) auth()->user()->admin_guide_enabled;
         
         $startDate = match($period) {
             'today' => now()->startOfDay(),
@@ -296,8 +300,23 @@ class AdminController extends Controller
             'totalTransactions', 'averageOrderValue', 'thisMonthRevenue', 'recentLogs',
             'totalForecastQty', 'productForecasts',
             'topMovingProduct', 'mostSoldProduct', 'categoryStats', 'period',
-            'fastMovingCount', 'stableMovingCount', 'slowMovingCount', 'restockNeededCount'
+            'fastMovingCount', 'stableMovingCount', 'slowMovingCount', 'restockNeededCount',
+            'showAdminGuide'
         ));
+    }
+
+    public function markAdminGuideSeen(Request $request)
+    {
+        $user = auth()->user();
+
+        if ($user && $user->role === 'admin' && Schema::hasColumn('users', 'admin_guide_enabled') && $user->admin_guide_enabled) {
+            $user->forceFill([
+                'admin_guide_seen_at' => now(),
+                'admin_guide_enabled' => false,
+            ])->save();
+        }
+
+        return response()->json(['success' => true]);
     }
 
     public function salesData(Request $request)
@@ -561,6 +580,7 @@ class AdminController extends Controller
             'created_by' => auth()->id(),
             'status' => 'active',
         ]);
+
         if ($request->ajax()) {
             return $this->manageStaff();
         }
@@ -640,7 +660,7 @@ class AdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        \App\Models\User::create([
+        $adminData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => \Illuminate\Support\Facades\Hash::make($request->password),
@@ -648,7 +668,13 @@ class AdminController extends Controller
             'admin_id' => $this->getAdminId(),
             'created_by' => auth()->id(),
             'status' => 'active',
-        ]);
+        ];
+
+        if (Schema::hasColumn('users', 'admin_guide_enabled')) {
+            $adminData['admin_guide_enabled'] = true;
+        }
+
+        \App\Models\User::create($adminData);
         if ($request->ajax()) {
             return $this->manageAdmins();
         }

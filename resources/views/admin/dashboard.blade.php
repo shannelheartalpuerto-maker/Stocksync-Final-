@@ -110,6 +110,71 @@
 </style>
 <div class="container-fluid px-4 staff-container animate-fade-up">
 
+    @if($showAdminGuide)
+    <div class="modal fade" id="adminIntroModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-4 d-inline-flex align-items-center justify-content-center">
+                            <i class="fa-solid fa-rocket text-primary fs-4"></i>
+                        </div>
+                        <div>
+                            <h5 class="modal-title fw-bold mb-1">Welcome to StockSync</h5>
+                            <p class="text-muted small mb-0">A quick setup guide for your new admin account.</p>
+                        </div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-4 pt-2 pb-4">
+                    <div class="alert alert-primary border-0 rounded-4 mb-4" style="background: linear-gradient(135deg, rgba(79,70,229,.08), rgba(14,165,233,.08));">
+                        <div class="fw-bold mb-1">Important first step</div>
+                        <div class="small text-secondary">Create a category before adding products so your inventory stays organized.</div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="border rounded-4 p-3 h-100 bg-light">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-primary bg-opacity-10 text-primary mb-3" style="width:44px;height:44px;">
+                                    <i class="fa-solid fa-folder-tree"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2">1. Create a Category</h6>
+                                <p class="text-muted small mb-0">Go to Categories first and add sections like Paper, Snacks, or Supplies.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-4 p-3 h-100 bg-light">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success bg-opacity-10 text-success mb-3" style="width:44px;height:44px;">
+                                    <i class="fa-solid fa-box-open"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2">2. Add Products</h6>
+                                <p class="text-muted small mb-0">After categories exist, add products and assign them to the correct category.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="border rounded-4 p-3 h-100 bg-light">
+                                <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-warning bg-opacity-10 text-warning mb-3" style="width:44px;height:44px;">
+                                    <i class="fa-solid fa-chart-column"></i>
+                                </div>
+                                <h6 class="fw-bold mb-2">3. Review Inventory</h6>
+                                <p class="text-muted small mb-0">Use the dashboard and stock tabs to monitor product levels and restock needs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0 px-4 pb-4">
+                    <button type="button" class="btn btn-light px-4" data-guide-href="{{ route('admin.categories.index') }}">
+                        <i class="fa-solid fa-folder-tree me-2"></i>Go to Categories
+                    </button>
+                    <button type="button" class="btn btn-primary px-4 fw-semibold" data-guide-href="{{ route('admin.products.index') }}">
+                        <i class="fa-solid fa-box-open me-2"></i>Start Adding Products
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- Mobile Header (mirrors inv-topbar + action buttons, mobile only) --}}
     <div class="mobile-topbar-card" style="display:none;">
         <div class="inv-topbar-inner">
@@ -600,6 +665,48 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const adminGuideModal = document.getElementById('adminIntroModal');
+        let adminGuideSeenMarked = false;
+
+        const markAdminGuideSeen = async () => {
+            if (adminGuideSeenMarked || !adminGuideModal) {
+                return;
+            }
+
+            adminGuideSeenMarked = true;
+
+            try {
+                await fetch(`{{ route('admin.dashboard.admin_guide_seen') }}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                });
+            } catch (error) {
+                console.error('Failed to mark admin guide as seen:', error);
+                adminGuideSeenMarked = false;
+            }
+        };
+
+        if (adminGuideModal) {
+            const modal = new bootstrap.Modal(adminGuideModal, { backdrop: false, keyboard: true });
+            modal.show();
+
+            adminGuideModal.querySelectorAll('[data-guide-href]').forEach((button) => {
+                button.addEventListener('click', async () => {
+                    const destination = button.getAttribute('data-guide-href');
+                    await markAdminGuideSeen();
+                    window.location.href = destination;
+                });
+            });
+
+            adminGuideModal.addEventListener('hidden.bs.modal', () => {
+                markAdminGuideSeen();
+            }, { once: true });
+        }
+
         // Persist active tab - URL param takes priority over localStorage
         const urlParams = new URLSearchParams(window.location.search);
         const tabFromUrl = urlParams.get('tab');

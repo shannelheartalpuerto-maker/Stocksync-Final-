@@ -609,7 +609,7 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-indigo bg-opacity-10 rounded-4 p-3">
+                                <div class="bg-white rounded-4 p-3">
                                     <h6 class="fw-bold mb-2 text-indigo"><i class="fa-solid fa-sliders me-2"></i>Inventory Thresholds</h6>
                                     <div class="row g-2">
                                         <div class="col-4">
@@ -683,9 +683,9 @@
                                 </div>
                                 <div class="text-start mt-2">
                                     <div class="mb-2">
-                                        <label class="form-label fw-semibold small text-muted text-uppercase mb-1">Category <span class="text-danger">*</span></label>
-                                        <select class="form-select border-0 bg-white shadow-sm" name="category_id" required>
-                                            <option value="">Select Category</option>
+                                        <label class="form-label fw-semibold small text-muted text-uppercase mb-1">Category</label>
+                                        <select class="form-select border-0 bg-white shadow-sm" name="category_id">
+                                            <option value="">N/A</option>
                                             @foreach($categories as $category)
                                             <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                                             @endforeach

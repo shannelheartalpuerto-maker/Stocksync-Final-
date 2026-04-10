@@ -28,6 +28,8 @@ class User extends Authenticatable
         'admin_id',
         'created_by',
         'status',
+        'admin_guide_seen_at',
+        'admin_guide_enabled',
         'phone_number',
         'address',
         'profile_image',
@@ -71,6 +73,8 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'admin_guide_seen_at' => 'datetime',
+        'admin_guide_enabled' => 'boolean',
     ];
 
     public function isAdmin()

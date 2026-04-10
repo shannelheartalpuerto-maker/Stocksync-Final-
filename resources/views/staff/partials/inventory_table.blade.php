@@ -189,8 +189,3 @@
         </div>
     </div>
 </div>
-
-<!-- Button to trigger modal (place where appropriate) -->
-<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#editThresholdsModal">
-    <i class="fa-solid fa-sliders me-1"></i> Edit Thresholds
-</button>
