@@ -11,6 +11,7 @@ use App\Models\DamagedStock;
 use App\Models\StockLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use App\Models\StockIn;
 
 class StaffController extends Controller
@@ -335,16 +336,21 @@ class StaffController extends Controller
 
     public function processSale(Request $request)
     {
+        $adminId = $this->getAdminId();
+
         $request->validate([
             'cart' => 'required|array',
-            'cart.*.id' => 'required|exists:products,id',
+            'cart.*.id' => [
+                'required',
+                Rule::exists('products', 'id')->where(fn ($query) => $query->where('admin_id', $adminId)),
+            ],
             'cart.*.quantity' => 'required|integer|min:1',
             'payment_received' => 'required|numeric|min:0',
         ]);
 
         $totalAmount = 0;
         foreach ($request->cart as $item) {
-            $product = Product::find($item['id']);
+            $product = Product::where('admin_id', $adminId)->find($item['id']);
             if (!$product) {
                 return response()->json(['error' => "Product ID {$item['id']} not found"], 422);
             }
@@ -362,7 +368,6 @@ class StaffController extends Controller
         DB::beginTransaction();
 
         try {
-            $adminId = $this->getAdminId();
             $userId = auth()->id();
 
             // Use more unique transaction number
@@ -379,7 +384,10 @@ class StaffController extends Controller
 
             foreach ($request->cart as $item) {
                 // Lock for update to prevent race conditions and ensure accurate stock
-                $product = Product::where('id', $item['id'])->lockForUpdate()->first();
+                $product = Product::where('admin_id', $adminId)
+                    ->where('id', $item['id'])
+                    ->lockForUpdate()
+                    ->first();
                 
                 if (!$product) {
                      throw new \Exception("Product {$item['name']} (ID: {$item['id']}) not found during processing.");
